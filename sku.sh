@@ -13,17 +13,21 @@ mongoexport --db catalogues --collection exportAllSkuVa --type=csv --fields No,V
 s3publicurl="https://s3-ap-southeast-1.amazonaws.com/mbiz-images"
 now=$(date +"%Y-%m-%d")
 path="./files"
-file_va=$path"/va_"$now".tar.gz"
-file_content=$path"/content_"$now".tar.gz"
+file_va=$path"/va_"$now".zip"
+file_content=$path"/content_"$now".zip"
+password="MBIZdata21"
 
-tar czf $file_va "va.csv"
-tar czf $file_content "content.csv"
+# tar czf $file_va "va.csv"
+# tar czf $file_content "content.csv"
+
+zip -P $password $file_va "va.csv"
+zip -P $password $file_content "content.csv"
 
 rm content.csv
 rm va.csv
 
 
-# UPLOAD TO S3 & insert to file list in mongo
+# # UPLOAD TO S3 & insert to file list in mongo
 for file in "$path"/*; do
 	
 	IFS='_' read -r -a array <<< "${file##*/}"
