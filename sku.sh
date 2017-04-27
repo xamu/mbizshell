@@ -17,9 +17,6 @@ file_va=$path"/va_"$now".zip"
 file_content=$path"/content_"$now".zip"
 password="MBIZdata21"
 
-# tar czf $file_va "va.csv"
-# tar czf $file_content "content.csv"
-
 zip -P $password $file_va "va.csv"
 zip -P $password $file_content "content.csv"
 
@@ -28,18 +25,20 @@ rm va.csv
 
 
 # # UPLOAD TO S3 & insert to file list in mongo
-for file in "$path"/*; do
-	
-	IFS='_' read -r -a array <<< "${file##*/}"
-	if [ ${array[0]} == 'va' ];
+for file in "$path"/*; do	
+	filename=${file##*/}
+	prev2=${filename:0:2}
+	if [ $prev2 == 'va' ];
 	then
+		type="va"
 		paths3="/reports/sku/va/"
 	else
+		type="content"
 		paths3="/reports/sku/content/"
 	fi
 
 	putS3 "$path" "${file##*/}" "$paths3"
-	mongo --nodb --quiet --eval "var name='${file##*/}', type='${array[0]}', date='$now', path='$s3publicurl$paths3'" insert_list.js
+	mongo --nodb --quiet --eval "var name='${file##*/}', type='$type', date='$now', path='$s3publicurl$paths3'" insert_list.js
 	
 	rm "$path/${file##*/}"
 done
