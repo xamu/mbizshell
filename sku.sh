@@ -6,15 +6,16 @@ source ./functions.sh
 mongo export_content.js
 mongo export_va.js
 
-mongoexport --db catalogues --collection exportAllSkuContent --type=csv --fields no,sku,title,brand,category,created,first_visible_date,status,price_unit,specification,item_type,product_weight,product_length,product_width,product_height,package_weight,package_length,package_width,package_height,image,vendor_sku_status,catalog_sku_status,discontinued,unspsc,unspsc_category,manufacturer_id,catalog_type,stock,web_visibility --out content.csv
+mongoexport --db catalogues --collection exportAllSkuContent --type=csv --fields no,sku,title,brand,category,created,first_visible_date,status,price_unit,item_type,product_weight,product_length,product_width,product_height,package_weight,package_length,package_width,package_height,image,vendor_sku_status,catalog_sku_status,discontinued,unspsc,unspsc_category,manufacturer_id,catalog_type,web_visibility --out content.csv
 
 mongoexport --db catalogues --collection exportAllSkuVa --type=csv --fields No,Vendor,BusinessName,SKU,VendorSKU,CategoryID,ProductName,Stock,price1,price2,price3,UploadDate,FirstVisibleDate,VendorSKUStatus,CatalogSKUStatus  --out va.csv
+
 
 s3publicurl="https://s3-ap-southeast-1.amazonaws.com/mbiz-images"
 now=$(date +"%Y-%m-%d")
 path="./files"
-file_va=$path"/va_"$now".zip"
-file_content=$path"/content_"$now".zip"
+file_va=$path"/va_"$now"_"$(( $RANDOM % 1000000 ))".zip"
+file_content=$path"/content_"$now"_"$(( $RANDOM % 1000000 ))".zip"
 password="MBIZdata21"
 
 zip -P $password $file_va "va.csv"
